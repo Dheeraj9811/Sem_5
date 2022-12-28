@@ -1,0 +1,44 @@
+import cv2
+from skimage.io import imread,imshow,imsave
+import numpy as np
+from matplotlib import pyplot as plt
+img = imread("final_test.tiff")
+# roberts operator function
+def roberts_filter(img,direction):
+    m,n = img.shape
+    if(direction==0):        
+        new_img = np.zeros([m, n])
+        for i in range(1,m-1):
+            for j in range(1,n-1):
+                temp = img[i-1,j-1]*(-1) + img[i,j]*1
+                new_img[i,j] = temp
+        return new_img
+    elif(direction==1):
+            new_img = np.zeros([m, n])
+            for i in range(1,m-1):
+                for j in range(1,n-1):
+                    temp = img[i-1,j-1]*(1) + img[i,j]*(-1)
+                    new_img[i,j] = temp
+            return new_img
+
+x = roberts_filter(img,0) # x directionm 
+y = roberts_filter(img,1) # y direction
+xy = np.abs(x)+ np.abs(y) # combine x+y direction
+
+imsave("robertxy.jpg",xy)
+plt.figure()
+plt.subplots(figsize=(15, 5))
+plt.subplot(1,3,1)
+plt.imshow(x,cmap=plt.get_cmap('gray'))
+plt.title("X_direction")
+
+plt.subplot(1,3,2)
+plt.imshow(y,cmap=plt.get_cmap('gray'))
+plt.title("Y_direction")
+
+plt.subplot(1,3,3)
+plt.imshow(xy,cmap=plt.get_cmap('gray'))
+plt.title("combine")
+
+plt.tight_layout()
+plt.show()
